@@ -1,15 +1,87 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-import { hello } from '../lib/holamundo.ts';
-
 import '../styles/styles.css';
 
-console.log(hello('agustin'));
+import { popularMoviesDTO } from '../lib/popularMoviesDTO.ts';
+import { popularTvSeriesDTO } from '../lib/popularTvSeriesDTO.ts';
+import { Image } from 'astro:assets';
+
+const api_key = import.meta.env.API_KEY;
+const base_url = import.meta.env.URL;
+const language = 'es-ES';
+const image_base_url = 'https://image.tmdb.org/t/p/w342';
+
+// fetch populars movies from tmdb api
+const url_movies = `${base_url}movie/popular?api_key=${api_key}&language=${language}`;
+const res = await fetch(url_movies);
+const data = await res.json();
+const movies = popularMoviesDTO(data.results);
+
+// fetch populars tv series from tmdb api
+const url_tv = `${base_url}tv/popular?api_key=${api_key}&language=${language}`;
+const res2 = await fetch(url_tv);
+const data2 = await res2.json();
+const series = popularTvSeriesDTO(data2.results);
 ---
 
-<Layout title='Welcome to Astro.'>
+<Layout title='Movies arg programa'>
   <main>
-    <h1 class='text-center text-8xl text-purple-400'>Hola mundo</h1>
+    <h1 class='text-center text-8xl text-purple-400'>Movies</h1>
+    <div class='flex flex-wrap gap-4'>
+      {
+        movies.map((movie: any) => (
+          <>
+            <a
+              href='#'
+              class='flex flex-col items-center rounded-lg border border-gray-200 bg-white shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 md:max-w-xl md:flex-row'
+            >
+              <Image
+                class='h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-l-lg'
+                src={image_base_url + movie.poster_path}
+                alt={movie.title}
+                width={200}
+                height={384}
+              />
+
+              <div class='flex flex-col justify-between p-4 leading-normal'>
+                <h5 class='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
+                  {movie.title}
+                </h5>
+                <p class='mb-3 font-normal text-gray-700 dark:text-gray-400'>
+                  {movie.overview}
+                </p>
+              </div>
+            </a>
+          </>
+        ))
+      }
+    </div>
+    <div class='flex flex-wrap gap-4'>
+      {
+        series.map((serie: any) => (
+          <>
+            <a
+              href='#'
+              class='flex flex-col items-center rounded-lg border border-gray-200 bg-white shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 md:max-w-xl md:flex-row'
+            >
+              <img
+                class='h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-l-lg'
+                src='/docs/images/blog/image-4.jpg'
+                alt=''
+              />
+              <div class='flex flex-col justify-between p-4 leading-normal'>
+                <h5 class='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
+                  {serie.title}
+                </h5>
+                <p class='mb-3 font-normal text-gray-700 dark:text-gray-400'>
+                  {serie.overview}
+                </p>
+              </div>
+            </a>
+          </>
+        ))
+      }
+    </div>
   </main>
 </Layout>
