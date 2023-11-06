@@ -1,10 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Billboard from '../components/Billboard.astro';
 
 import '../styles/styles.css';
 
 import { popularMoviesDTO } from '../lib/popularMoviesDTO.ts';
 import { popularTvSeriesDTO } from '../lib/popularTvSeriesDTO.ts';
+
 import { Image } from 'astro:assets';
 
 const api_key = import.meta.env.API_KEY;
@@ -18,7 +20,7 @@ const res = await fetch(url_movies);
 const data = await res.json();
 const movies = popularMoviesDTO(data.results);
 
-// take 3 random movies from popular movies and display them
+// Create an array with 3 random movies
 const random_movies = movies.sort(() => Math.random() - 0.5).slice(0, 3);
 
 // fetch populars tv series from tmdb api
@@ -29,17 +31,18 @@ const random_movies = movies.sort(() => Math.random() - 0.5).slice(0, 3);
 ---
 
 <Layout title='Movies arg programa'>
-  <main>
+  <main class=''>
     <h1 class='text-center text-8xl text-purple-400'>Movies</h1>
-    <div class='flex flex-wrap gap-4'>
+    <Billboard image={random_movies} />
+    <div class='flex flex-wrap gap-8'>
       {
         movies.map((movie: any) => (
           <a href={`/movie/${movie.id}`}>
             <Image
               src={image_base_url + movie.poster_path}
               alt={movie.title}
-              width={342}
-              height={513}
+              width={200}
+              height={100}
             />
           </a>
         ))
