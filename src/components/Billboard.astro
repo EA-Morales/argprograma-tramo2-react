@@ -1,11 +1,24 @@
 ---
+import { Image } from 'astro:assets';
 interface Props {
   image: [string];
 }
 
 const { image } = Astro.props;
 
-console.log(image);
+//fetch image backdrop_path
+const image_base_url = 'https://image.tmdb.org/t/p/w1280';
 ---
 
-<div class='relative'></div>
+<div
+  class='relative h-screen bg-slate-950 bg-gradient-to-b from-zinc-900 to-zinc-950'
+>
+  <Image
+    class='object-cover object-center brightness-[30%]'
+    src={image_base_url + image}
+    alt='Billboard'
+    quality={'mid'}
+    width={1440}
+    height={810}
+  />
+</div>
